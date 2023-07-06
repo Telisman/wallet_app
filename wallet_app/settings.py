@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'wallet_api',
     'wallet_processor',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
