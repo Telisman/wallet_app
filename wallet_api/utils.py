@@ -1,7 +1,6 @@
 import requests
 from wallet_processor.views import execute_transaction
 from wallet_processor.models import Customer
-
 def split_transactions(transactions):
     # Sort transactions by priority (value and latency)
     sorted_transactions = sorted(transactions, key=lambda t: (t['value'], -t['latency']), reverse=True)
@@ -17,13 +16,24 @@ def split_transactions(transactions):
             remaining_time -= transaction['latency']
         else:
             chunks.append(current_chunk)
+            total_value = sum(t['value'] for t in current_chunk)
+            print("Chunk {}:".format(len(chunks)))
+            print("\ttransaction: {}".format(current_chunk))
+            print("\ttotal value: {}".format(total_value))
+            print("\ttime left: {}\n".format(remaining_time))
             current_chunk = [transaction]
             remaining_time = 1000 - transaction['latency']
 
     if current_chunk:
         chunks.append(current_chunk)
+        total_value = sum(t['value'] for t in current_chunk)
+        print("Chunk {}:".format(len(chunks)))
+        print("\ttransaction: {}".format(current_chunk))
+        print("\ttotal value: {}".format(total_value))
+        print("\ttime left: \n")
 
     return chunks
+
 
 def send_to_wallet_processor(chunk):
     endpoint = 'http://127.0.0.1:8000/transaction/'  # Update the endpoint URL with the correct URL
@@ -44,26 +54,3 @@ def send_to_wallet_processor(chunk):
     else:
         print('Failed to process chunk.')
 
-def execute_transaction(transaction):
-    customer_id = transaction['customer']
-    value = transaction['value']
-
-    # Retrieve the customer from the database
-    try:
-        customer = Customer.objects.get(id=customer_id)
-    except Customer.DoesNotExist:
-        print(f"Customer with ID {customer_id} does not exist.")
-        return
-
-    # Check if the customer has sufficient balance
-    if customer.balance >= value:
-        # Update the customer's balance
-        customer.balance -= value
-        customer.save()
-        # Execute additional transaction logic if needed
-
-        # Log the successful transaction
-        print(f"Transaction executed for Customer {customer_id}. Remaining balance: {customer.balance}")
-    else:
-        # Log the insufficient balance and handle the transaction failure
-        print(f"Transaction failed for Customer {customer_id}. Insufficient balance: {customer.balance}")
