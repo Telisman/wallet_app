@@ -1,4 +1,5 @@
 import requests
+from wallet_processor.views import execute_transaction
 from wallet_processor.models import Customer
 
 def split_transactions(transactions):
@@ -42,3 +43,27 @@ def send_to_wallet_processor(chunk):
         print('Chunk processed successfully.')
     else:
         print('Failed to process chunk.')
+
+def execute_transaction(transaction):
+    customer_id = transaction['customer']
+    value = transaction['value']
+
+    # Retrieve the customer from the database
+    try:
+        customer = Customer.objects.get(id=customer_id)
+    except Customer.DoesNotExist:
+        print(f"Customer with ID {customer_id} does not exist.")
+        return
+
+    # Check if the customer has sufficient balance
+    if customer.balance >= value:
+        # Update the customer's balance
+        customer.balance -= value
+        customer.save()
+        # Execute additional transaction logic if needed
+
+        # Log the successful transaction
+        print(f"Transaction executed for Customer {customer_id}. Remaining balance: {customer.balance}")
+    else:
+        # Log the insufficient balance and handle the transaction failure
+        print(f"Transaction failed for Customer {customer_id}. Insufficient balance: {customer.balance}")
