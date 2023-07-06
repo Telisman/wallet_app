@@ -2,7 +2,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from wallet_processor.utils import execute_transaction
 from wallet_api.utils import split_transactions
 
@@ -11,7 +12,34 @@ api_value = 'your_desired_value'
 api_key = generate_api_key(api_value)
 print("Generated API key:", api_key)
 
-
+@swagger_auto_schema(
+    method='post',
+    operation_description='Process transactions',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'transaction': openapi.Schema(
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        # Define your transaction properties here
+                    },
+                ),
+            ),
+        },
+        required=['transaction'],
+    ),
+    responses={
+        200: openapi.Response(
+            description='Transactions processed successfully',
+        ),
+        400: 'Invalid request payload',
+        401: 'Invalid API key',
+        405: 'Invalid request method',
+        500: 'Internal server error',
+    }
+)
 @api_view(['POST'])
 @csrf_exempt
 def process_transactions(request):
