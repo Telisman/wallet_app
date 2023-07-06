@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'wallet_db',
         'USER': 'admin_wallet',
-        'PASSWORD': 'opke1987',
+        'PASSWORD': 'new_password_12345678',
         'HOST': 'localhost',
         'PORT': '',
     }
