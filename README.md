@@ -10,6 +10,12 @@ Before setting up the Wallet App, make sure you have the following prerequisites
 - Django (version 4.2.2)
 - Django REST Framework (version 3.14.0)
 
+
+## Extra links
+
+https://documenter.getpostman.com/view/28385092/2s93zFYKfu
+
+
 ## Installation
 
 1. Clone the repository:
@@ -100,9 +106,6 @@ The Wallet App can be configured through the following environment variables:
 
  
 
-## Extra links
-
-https://documenter.getpostman.com/view/28385092/2s93zFYKfu
 
 ## Functionality
 
